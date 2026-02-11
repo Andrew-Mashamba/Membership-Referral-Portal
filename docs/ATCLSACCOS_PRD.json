@@ -1,0 +1,1037 @@
+{
+  "project": {
+    "name": "ATCL SACCOS Membership Referral Portal",
+    "description": "A secure, user-friendly membership referral portal enabling existing members to refer new members digitally, with referral tracking, approval workflow, and management reporting. ATCL SACCOS Ltd. RFQ ATCLSACCOS/NC/02/2025-2026.",
+    "objectives": [
+      "Develop a secure, user-friendly membership referral portal/system",
+      "Improve membership acquisition, tracking, and reporting",
+      "Enable existing members to refer new members digitally",
+      "Generate management reports (daily, monthly, annual)"
+    ],
+    "constraints": {
+      "implementation_period_days": 45,
+      "procurement_ref": "ATCLSACCOS/NC/02/2025-2026",
+      "client": "ATCL SACCOS LTD"
+    },
+    "tech_stack": {
+      "framework": "Laravel 12.x",
+      "language": "PHP 8.2+",
+      "frontend": "Livewire 3.x + Alpine.js + Tailwind CSS",
+      "database": "MySQL 8.0 / PostgreSQL 15 / SQLite (dev)",
+      "cache": "Redis (optional)",
+      "realtime": "Laravel Reverb or Pusher (optional for notifications)",
+      "deployment": "Web-based, desktop and mobile compatible"
+    },
+    "design_reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors. See docs/DESIGN_GUIDELINES.md. Each story includes design and access_route."
+  },
+  "stories": [
+    {
+      "id": 1,
+      "original_id": "STORY-001",
+      "title": "Member Registration",
+      "description": "As a prospective member, I want to register for the referral portal so that I can refer new members and track my referrals",
+      "acceptance": [
+        "Registration form with required fields (name, membership number, email, phone, password)",
+        "Validate membership number against existing SACCOS member data (if integration exists)",
+        "Password complexity requirements (min length, mixed case, numbers/symbols)",
+        "Confirm password field",
+        "Email verification option (send verification link)",
+        "Duplicate registration prevention (unique email, membership number)",
+        "Display clear validation errors",
+        "Success message and redirect to login after registration",
+        "Responsive form for mobile and desktop",
+        "Task: Build registration Livewire component",
+        "Task: Implement membership validation service",
+        "Task: Create email verification flow",
+        "Task: Design responsive registration page"
+      ],
+      "priority": 1,
+      "estimate_hours": 6.0,
+      "module": "Authentication",
+      "epic": "EPIC-001",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "x-app-layout (guest): header h-[40vh] bg-brandBlue, main flex-1 min-h-0 overflow-y-auto px-6",
+        "components": ["atcl-button for Submit CTA; form inputs with text-body text-primaryText; labels text-subtitle text-secondaryText"],
+        "tokens": "bg-white for form card; shadow-soft rounded-lgx; min 48px touch targets; primary CTA bg-brandBlue",
+        "notes": "Registration form in white card; no bg-blue-* (use brandBlue only)"
+      },
+      "access_route": {
+        "route": "/register",
+        "menu": "N/A – link from login page",
+        "livewire_component": "auth.register",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 2,
+      "original_id": "STORY-002",
+      "title": "Member Login",
+      "description": "As a member, I want to log into the referral portal securely so that I can submit and track referrals",
+      "acceptance": [
+        "Login form with email/membership number and password",
+        "Validate credentials against database",
+        "Show generic error for invalid credentials (no hints)",
+        "Lock account after 5 failed attempts (configurable lockout period)",
+        "Redirect to referral dashboard on successful login",
+        "Remember me option (secure token)",
+        "Support both email and membership number login",
+        "Log all login attempts for security audit",
+        "Responsive design for mobile and desktop",
+        "Task: Create login Livewire component",
+        "Task: Implement credential validation and lockout",
+        "Task: Add login attempt logging"
+      ],
+      "priority": 2,
+      "estimate_hours": 4.0,
+      "module": "Authentication",
+      "epic": "EPIC-001",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "x-app-layout (guest): header bg-brandBlue with logo, main flex-1 overflow-y-auto px-6",
+        "components": ["atcl-button for Login CTA; input fields text-body; link for Forgot Password / Register"],
+        "tokens": "bg-white form card; shadow-soft rounded-lgx; bg-brandBlue for primary button; min 48px touch targets",
+        "notes": "Login form only; no sidebar/topbar"
+      },
+      "access_route": {
+        "route": "/login",
+        "menu": "N/A – entry point (default unauthenticated)",
+        "livewire_component": "auth.login",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 3,
+      "original_id": "STORY-003",
+      "title": "Password Reset",
+      "description": "As a member, I want to reset my forgotten password so that I can regain access to the portal",
+      "acceptance": [
+        "Forgot Password link on login page",
+        "Enter email or membership number",
+        "System sends reset link (valid 60 minutes, single-use)",
+        "New password must meet complexity requirements",
+        "Confirm new password field",
+        "Notify user of successful reset",
+        "Invalidate all active sessions on reset",
+        "Task: Build password reset request form",
+        "Task: Create reset token generation and email template",
+        "Task: Implement password change form"
+      ],
+      "priority": 3,
+      "estimate_hours": 3.0,
+      "module": "Authentication",
+      "epic": "EPIC-001",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "x-app-layout (guest): same as login; two steps – request form then reset form",
+        "components": ["atcl-button for Submit; text-body inputs; link back to login"],
+        "tokens": "bg-white cards; shadow-soft rounded-lgx; bg-brandBlue for CTAs",
+        "notes": "Request reset and set-new-password screens share layout"
+      },
+      "access_route": {
+        "route": "/forgot-password, /reset-password/{token}",
+        "menu": "N/A – link from login page (Forgot Password)",
+        "livewire_component": "auth.forgot-password, auth.reset-password",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 4,
+      "original_id": "STORY-004",
+      "title": "Secure Logout and Session",
+      "description": "As a member, I want to log out securely and have my session managed so that my account is protected",
+      "acceptance": [
+        "Logout button visible in navigation",
+        "Logout clears all session data and cookies",
+        "Redirect to login page with success message",
+        "Log logout event for audit",
+        "Optional: auto-logout after period of inactivity",
+        "Task: Implement logout and session cleanup",
+        "Task: Add optional session timeout"
+      ],
+      "priority": 4,
+      "estimate_hours": 2.0,
+      "module": "Authentication",
+      "epic": "EPIC-001",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "N/A – logout is an action; post-logout redirect to /login uses guest layout",
+        "components": ["Logout control in topbar/profile dropdown: text-body, focus:ring-brandBlue"],
+        "tokens": "Touch target ≥48px; aria-label for logout",
+        "notes": "No dedicated page; button/link in app layout"
+      },
+      "access_route": {
+        "route": "N/A – action only; redirects to /login",
+        "menu": "Main nav → User profile dropdown → Logout",
+        "livewire_component": "N/A (form or Livewire method in layout)",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 5,
+      "original_id": "STORY-005",
+      "title": "Submit Referral",
+      "description": "As a member, I want to submit a new member referral so that the referred person can be considered for membership",
+      "acceptance": [
+        "Form to capture referred person details: full name, phone, email, relationship to referrer, optional notes",
+        "Required fields validated (at minimum: name, phone or email)",
+        "System assigns unique referral identification (e.g. REF-YYYYMMDD-XXXX)",
+        "Referral saved with status PENDING",
+        "Referrer (current user) automatically linked to referral",
+        "Submission date and time recorded",
+        "Success message and option to submit another or view referrals",
+        "Prevent duplicate referral by same referrer for same phone/email (configurable)",
+        "Responsive form for mobile",
+        "Task: Build referral submission Livewire component",
+        "Task: Implement unique referral ID generation",
+        "Task: Create referral model and validation",
+        "Task: Design referral form UI"
+      ],
+      "priority": 5,
+      "estimate_hours": 6.0,
+      "module": "Referrals",
+      "epic": "EPIC-002",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "x-app-layout: header bg-brandBlue; main px-6 p-4; form in bg-white shadow-soft rounded-lgx",
+        "components": ["atcl-button for Submit referral; inputs text-body text-primaryText; labels text-subtitle; truncate/line-clamp for long text"],
+        "tokens": "bg-brandBlue primary CTA; gap-3 between fields; mb-6 section spacing; min 48px touch targets",
+        "notes": "Single form or stepped form; cards for each section"
+      },
+      "access_route": {
+        "route": "/referrals/create",
+        "menu": "Main nav → Referrals → Submit referral (or New referral)",
+        "livewire_component": "referrals.submit-referral",
+        "secondary_menu_or_tab": "Referrals"
+      }
+    },
+    {
+      "id": 6,
+      "original_id": "STORY-006",
+      "title": "Unique Referral Identification",
+      "description": "As a user, I want every referral to have a unique identifier so that referrals can be tracked and reported unambiguously",
+      "acceptance": [
+        "System generates unique referral ID on creation (e.g. REF-20260210-0001)",
+        "ID is immutable and displayed on referral detail and in lists",
+        "ID format is configurable (prefix + date + sequence or UUID)",
+        "IDs are sortable and searchable",
+        "Export and reports include referral ID",
+        "Task: Implement referral ID generation service",
+        "Task: Ensure ID uniqueness under concurrency",
+        "Task: Add ID to all referral views and exports"
+      ],
+      "priority": 6,
+      "estimate_hours": 3.0,
+      "module": "Referrals",
+      "epic": "EPIC-002",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "ID displayed in list and detail; no separate screen – applied in referral cards and tables",
+        "components": ["text-body for referral ID; text-brandBlue for emphasis if needed; truncate for ID in narrow columns"],
+        "tokens": "text-primaryText for ID; consistent in all referral views",
+        "notes": "Cross-cutting: ensure ID visible in referrals list, detail, exports"
+      },
+      "access_route": {
+        "route": "Shown on /referrals, /referrals/{id}, /admin/referrals",
+        "menu": "Any referral list or detail",
+        "livewire_component": "referrals.referral-list, referrals.referral-detail, admin.pending-referrals",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 7,
+      "original_id": "STORY-007",
+      "title": "View My Referrals",
+      "description": "As a member, I want to view and track my submitted referrals so that I know their status",
+      "acceptance": [
+        "List of referrals submitted by the logged-in member",
+        "Show columns: referral ID, referred name, contact, date submitted, status (Pending/Approved/Rejected)",
+        "Filter by status and date range",
+        "Sort by date, status, name",
+        "Pagination (e.g. 10–20 per page)",
+        "Click row to view referral details",
+        "Responsive table (card layout on mobile)",
+        "Task: Build referrals list Livewire component",
+        "Task: Implement filtering and sorting",
+        "Task: Create referral detail view"
+      ],
+      "priority": 7,
+      "estimate_hours": 4.0,
+      "module": "Referrals",
+      "epic": "EPIC-002",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "x-app-layout; main content: list in bg-white shadow-soft rounded-lgx; table or card stack; p-4",
+        "components": ["Table: text-body; status badges; atcl-button or link for row action; pagination with min 48px targets"],
+        "tokens": "text-primaryText for cells; text-secondaryText for meta; mobile: card layout per row",
+        "notes": "Filter/sort bar above list; overflow-y-auto for scrollable list"
+      },
+      "access_route": {
+        "route": "/referrals",
+        "menu": "Main nav → Referrals → My referrals",
+        "livewire_component": "referrals.referral-list",
+        "secondary_menu_or_tab": "Referrals"
+      }
+    },
+    {
+      "id": 8,
+      "original_id": "STORY-008",
+      "title": "Referral Tracking (Status and History)",
+      "description": "As a member or admin, I want to see referral status and history so that I can track progress through the workflow",
+      "acceptance": [
+        "Each referral has status: Pending, In Review, Approved, Rejected",
+        "Status change history (who changed, when, optional comment)",
+        "Referral detail page shows full history and current status",
+        "Members see only their own referrals; admins see all (role-based)",
+        "Task: Add status and status_history to referral model",
+        "Task: Build status timeline or history component",
+        "Task: Enforce visibility by role"
+      ],
+      "priority": 8,
+      "estimate_hours": 4.0,
+      "module": "Referrals",
+      "epic": "EPIC-002",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Detail page: header with ID and status; timeline or list for history in bg-white shadow-soft rounded-lgx",
+        "components": ["Status badge (text-body); timeline items with text-subtitle for dates; line-clamp-2 for comments"],
+        "tokens": "text-brandBlue for current status emphasis; mb-6 between sections",
+        "notes": "Same detail view for member and admin; visibility by role"
+      },
+      "access_route": {
+        "route": "/referrals/{id}",
+        "menu": "Main nav → Referrals → [click row] or Admin → All Referrals → [click row]",
+        "livewire_component": "referrals.referral-detail",
+        "secondary_menu_or_tab": "Referrals"
+      }
+    },
+    {
+      "id": 9,
+      "original_id": "STORY-009",
+      "title": "Approval Workflow – View Pending Referrals",
+      "description": "As an administrator or approver, I want to view all pending referrals so that I can review and approve or reject them",
+      "acceptance": [
+        "List of referrals with status Pending (and optionally In Review)",
+        "Show: referral ID, referred name, contact, referrer name, date submitted",
+        "Filter by date, referrer, status",
+        "Sort by date, referrer",
+        "Pagination",
+        "Link to referral detail for full information",
+        "Task: Build admin pending-referrals list",
+        "Task: Implement filters and access control"
+      ],
+      "priority": 9,
+      "estimate_hours": 3.0,
+      "module": "Approval Workflow",
+      "epic": "EPIC-003",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Admin layout: sidebar + main; list in bg-white shadow-soft rounded-lgx; p-4",
+        "components": ["Table/cards; text-body; atcl-button or link to open detail; filter bar with text-body inputs"],
+        "tokens": "bg-brandBlue for Approve/Review CTA if on list; pagination min 48px",
+        "notes": "Admin-only; same list patterns as member referrals but all pending"
+      },
+      "access_route": {
+        "route": "/admin/referrals/pending",
+        "menu": "Admin sidebar → Pending Referrals",
+        "livewire_component": "admin.pending-referrals",
+        "secondary_menu_or_tab": "Admin → Pending Referrals"
+      }
+    },
+    {
+      "id": 10,
+      "original_id": "STORY-010",
+      "title": "Approve Referred Member",
+      "description": "As an approver, I want to approve a referred member so that the referral is marked approved and the referred person can be onboarded",
+      "acceptance": [
+        "Approve action on referral detail (button or bulk action)",
+        "Optional approval notes stored with referral",
+        "Status changes to Approved",
+        "Approval date and approver user recorded",
+        "Trigger automated notification to referrer (and optionally to referred person if contact available)",
+        "Audit log entry for approval",
+        "Task: Implement approve action and status update",
+        "Task: Wire approval to notification trigger",
+        "Task: Add audit logging"
+      ],
+      "priority": 10,
+      "estimate_hours": 3.0,
+      "module": "Approval Workflow",
+      "epic": "EPIC-003",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "On referral detail page: action bar with Approve (primary) and Reject; optional notes in modal/card",
+        "components": ["atcl-button primary (bg-brandBlue) for Approve; secondary for Reject; text-body for notes"],
+        "tokens": "min 48px buttons; focus:ring-brandBlue; shadow-soft for modal if used",
+        "notes": "Approve = single CTA; Reject opens reason input"
+      },
+      "access_route": {
+        "route": "/admin/referrals/{id} (detail page)",
+        "menu": "Admin → Pending Referrals → [row] → Approve button",
+        "livewire_component": "admin.referral-detail (or shared referrals.referral-detail with actions)",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 11,
+      "original_id": "STORY-011",
+      "title": "Reject Referred Member",
+      "description": "As an approver, I want to reject a referral with a reason so that the referrer is informed and records are clear",
+      "acceptance": [
+        "Reject action on referral detail",
+        "Rejection reason required (free text or predefined list)",
+        "Status changes to Rejected",
+        "Rejection date and approver recorded",
+        "Trigger automated notification to referrer (reason included where appropriate)",
+        "Audit log entry for rejection",
+        "Task: Implement reject action with reason",
+        "Task: Wire rejection to notification",
+        "Task: Add audit logging"
+      ],
+      "priority": 11,
+      "estimate_hours": 3.0,
+      "module": "Approval Workflow",
+      "epic": "EPIC-003",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "On same referral detail; Reject button opens modal or inline form for reason (required)",
+        "components": ["atcl-button for Reject; textarea/input text-body for reason; confirm action with shadow-soft modal"],
+        "tokens": "Secondary button style for Reject; primary for Confirm reject; rounded-lgx modal",
+        "notes": "Reason required; validation message text-secondaryText"
+      },
+      "access_route": {
+        "route": "/admin/referrals/{id}",
+        "menu": "Admin → Pending Referrals → [row] → Reject button",
+        "livewire_component": "admin.referral-detail",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 12,
+      "original_id": "STORY-012",
+      "title": "Bulk Approve or Reject Referrals",
+      "description": "As an approver, I want to approve or reject multiple referrals at once so that I can process high volume efficiently",
+      "acceptance": [
+        "Select multiple referrals from list (checkboxes)",
+        "Bulk Approve with optional shared note",
+        "Bulk Reject with required shared reason",
+        "Confirmation modal before bulk action",
+        "Progress or success summary (e.g. X approved, Y failed)",
+        "Each processed referral triggers notifications and audit as per single approve/reject",
+        "Task: Build bulk selection and action UI",
+        "Task: Implement bulk status update and notifications"
+      ],
+      "priority": 12,
+      "estimate_hours": 4.0,
+      "module": "Approval Workflow",
+      "epic": "EPIC-003",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Same list as STORY-009; checkboxes per row; toolbar: Bulk Approve / Bulk Reject; confirmation modal",
+        "components": ["Checkbox min 48px; atcl-button for bulk actions; modal rounded-lgx shadow-soft for confirm"],
+        "tokens": "gap-3 in toolbar; text-body in modal; primary CTA bg-brandBlue",
+        "notes": "Progress/summary after submit: text-subtitle"
+      },
+      "access_route": {
+        "route": "/admin/referrals/pending",
+        "menu": "Admin → Pending Referrals → select rows → Bulk Approve / Bulk Reject",
+        "livewire_component": "admin.pending-referrals",
+        "secondary_menu_or_tab": "Admin → Pending Referrals"
+      }
+    },
+    {
+      "id": 13,
+      "original_id": "STORY-013",
+      "title": "Referral Performance Dashboard (Member)",
+      "description": "As a member, I want to see a dashboard of my referral performance so that I know how many I referred and their status",
+      "acceptance": [
+        "Summary cards: total referrals, pending, approved, rejected",
+        "Simple chart or list: referrals over time (e.g. last 6 months)",
+        "Recent referrals list (last 5–10)",
+        "Quick link to submit new referral",
+        "Dashboard visible after login (default landing for members)",
+        "Responsive layout for mobile and desktop",
+        "Task: Build member dashboard Livewire component",
+        "Task: Implement aggregate queries and charts",
+        "Task: Design dashboard layout"
+      ],
+      "priority": 13,
+      "estimate_hours": 5.0,
+      "module": "Dashboard",
+      "epic": "EPIC-004",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "x-app-layout; main: summary cards row (bg-white shadow-soft rounded-lgx), then chart/list; p-4 mb-6",
+        "components": ["Cards: text-title for numbers, text-subtitle for labels; atcl-button for Submit new referral link"],
+        "tokens": "bg-brandBlue for one accent card or key metric; gap-3 between cards; responsive grid",
+        "notes": "Default landing after login for members"
+      },
+      "access_route": {
+        "route": "/dashboard",
+        "menu": "Main nav → Dashboard (default after login for members)",
+        "livewire_component": "dashboard.member-dashboard",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 14,
+      "original_id": "STORY-014",
+      "title": "Referral Performance Dashboard (Admin)",
+      "description": "As an administrator, I want to see a referral performance dashboard so that I can monitor overall referral activity and outcomes",
+      "acceptance": [
+        "Summary: total referrals, pending, approved, rejected (all time and optional period filter)",
+        "Referrals over time (daily/monthly trend)",
+        "Top referrers (members with most referrals or most approved)",
+        "Pending count and link to approval queue",
+        "Optional: referrals by period (daily/monthly/annual)",
+        "Dashboard as default landing for admin role",
+        "Responsive layout",
+        "Task: Build admin dashboard with aggregates",
+        "Task: Add top-referrers and trend data",
+        "Task: Add period filters"
+      ],
+      "priority": 14,
+      "estimate_hours": 6.0,
+      "module": "Dashboard",
+      "epic": "EPIC-004",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Admin layout; main: summary cards, trend area, top referrers list; all in bg-white shadow-soft rounded-lgx",
+        "components": ["Same card typography; period filter dropdown text-body; table or list for top referrers"],
+        "tokens": "bg-brandBlue for pending-count CTA linking to approval queue; mb-6 sections",
+        "notes": "Default landing for admin role"
+      },
+      "access_route": {
+        "route": "/admin/dashboard",
+        "menu": "Admin sidebar → Dashboard (default after login for admin)",
+        "livewire_component": "admin.dashboard",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 15,
+      "original_id": "STORY-015",
+      "title": "Automated Notifications – Email",
+      "description": "As a user, I want to receive email notifications for referral events so that I stay informed without logging in",
+      "acceptance": [
+        "Email sent to referrer when referral is approved",
+        "Email sent to referrer when referral is rejected (with reason if configured)",
+        "Optional: email to referred person when approved (if email captured)",
+        "Email templates configurable (subject, body) or editable in admin",
+        "Use queue for sending (avoid blocking request)",
+        "Log notification delivery status where applicable",
+        "Task: Create email notification classes and templates",
+        "Task: Trigger emails on approve/reject",
+        "Task: Add queue and basic logging"
+      ],
+      "priority": 15,
+      "estimate_hours": 4.0,
+      "module": "Notifications",
+      "epic": "EPIC-005",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "No dedicated UI – email templates; use same tokens for any in-app preview of email",
+        "components": ["Email HTML: inline styles mirroring tokens – brandBlue #20538A, primaryText, secondaryText; single-column layout"],
+        "tokens": "Consistent with brand; readable font size ~13–15px equivalent",
+        "notes": "Backend/queue; template edit in admin can use simple form (text-body)"
+      },
+      "access_route": {
+        "route": "N/A – triggered by system on approve/reject",
+        "menu": "N/A",
+        "livewire_component": "N/A (notification job + mailable)",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 16,
+      "original_id": "STORY-016",
+      "title": "Automated Notifications – SMS (Where Applicable)",
+      "description": "As a user, I want to receive SMS notifications for referral outcomes so that I am informed on my phone",
+      "acceptance": [
+        "SMS sent to referrer when referral is approved (if phone available)",
+        "SMS sent to referrer when referral is rejected (if phone available)",
+        "Integration with SMS gateway (e.g. Africa's Talking, Twilio, or local provider)",
+        "SMS content configurable or template-based",
+        "Use queue for sending",
+        "Graceful fallback if SMS fails (e.g. log and optionally send email only)",
+        "Task: Integrate SMS gateway",
+        "Task: Create SMS notification flow",
+        "Task: Add configuration for SMS enable/disable and templates"
+      ],
+      "priority": 16,
+      "estimate_hours": 5.0,
+      "module": "Notifications",
+      "epic": "EPIC-005",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "No dedicated UI – SMS sent by backend; config UI in Admin → Settings",
+        "components": ["Settings form for SMS: text-body inputs; toggle/select for gateway"],
+        "tokens": "Same as email; SMS content template in admin uses same typography tokens",
+        "notes": "Backend integration; optional in-app SMS log list: table with text-body"
+      },
+      "access_route": {
+        "route": "N/A – triggered by system; config: /admin/settings",
+        "menu": "Admin → Settings → Notifications (tab or section)",
+        "livewire_component": "admin.settings (notifications section)",
+        "secondary_menu_or_tab": "Admin → Settings"
+      }
+    },
+    {
+      "id": 17,
+      "original_id": "STORY-017",
+      "title": "In-App Notifications",
+      "description": "As a logged-in user, I want to see in-app notifications for referral updates so that I have a single place to check",
+      "acceptance": [
+        "Notification bell or list in header/navigation",
+        "Show unread count",
+        "List recent notifications (e.g. last 20): message, time, link to referral",
+        "Mark as read when viewed or when user opens referral",
+        "Optional: mark all as read",
+        "Task: Build notification UI component",
+        "Task: Store and retrieve user notifications",
+        "Task: Link notifications to referral detail"
+      ],
+      "priority": 17,
+      "estimate_hours": 3.0,
+      "module": "Notifications",
+      "epic": "EPIC-005",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Bell icon in topbar/header; dropdown: bg-white shadow-card rounded-lgx, list of items, max height overflow-y-auto",
+        "components": ["Icon 48px touch target; badge for count (text-subtitle); list items text-body; line-clamp-2 for message; link to referral"],
+        "tokens": "text-secondaryText for time ago; focus:ring-brandBlue on focus; mark read = subtle state change",
+        "notes": "Dropdown min width; accessible aria-label"
+      },
+      "access_route": {
+        "route": "N/A – component in layout",
+        "menu": "Topbar (all authenticated pages) → Notification bell",
+        "livewire_component": "layouts.notification-dropdown or shared header component",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 18,
+      "original_id": "STORY-018",
+      "title": "Administrative Control Panel – Overview",
+      "description": "As an administrator, I want an admin control panel so that I can manage referrals, users, and settings in one place",
+      "acceptance": [
+        "Admin area accessible only to users with admin role",
+        "Menu/sidebar: Dashboard, Pending Referrals, All Referrals, Reports, Users (if applicable), Settings",
+        "Clear separation from member-facing pages (route prefix, layout)",
+        "Responsive admin layout",
+        "Task: Define admin routes and middleware",
+        "Task: Build admin layout and navigation",
+        "Task: Enforce role-based access"
+      ],
+      "priority": 18,
+      "estimate_hours": 4.0,
+      "module": "Administration",
+      "epic": "EPIC-006",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Admin layout: sidebar with nav (Dashboard, Pending Referrals, All Referrals, Reports, Users, Settings); main area flex-1 overflow-y-auto",
+        "components": ["Sidebar: atcl-button style or nav links; text-title for group, text-body for items; active state bg-brandBlue or text-brandBlue"],
+        "tokens": "bg-white sidebar; shadow-soft; min 48px nav items; px-6 main content",
+        "notes": "Route prefix /admin; separate layout from member app"
+      },
+      "access_route": {
+        "route": "/admin",
+        "menu": "N/A – admin entry; then Admin sidebar (Dashboard, Pending Referrals, All Referrals, Reports, Users, Settings)",
+        "livewire_component": "admin.layout (wrapper); each page has own component",
+        "secondary_menu_or_tab": "Admin sidebar"
+      }
+    },
+    {
+      "id": 19,
+      "original_id": "STORY-019",
+      "title": "Administration – User and Role Management",
+      "description": "As an administrator, I want to manage users and roles so that only authorized people can access the portal and approval functions",
+      "acceptance": [
+        "List users (members who can log in, plus admin users)",
+        "Assign roles: Member, Approver, Administrator",
+        "Enable/disable member portal access",
+        "Optional: create internal admin users (no membership number)",
+        "Audit log for role/permission changes",
+        "Task: Implement roles and permissions (e.g. Laravel Jetstream/Spatie)",
+        "Task: Build user/role management UI",
+        "Task: Restrict approval actions to Approver/Admin"
+      ],
+      "priority": 19,
+      "estimate_hours": 5.0,
+      "module": "Administration",
+      "epic": "EPIC-006",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Admin → Users: list table in bg-white shadow-soft rounded-lgx; form modals or side panel for edit/role assign",
+        "components": ["Table text-body; atcl-button for Add user / Edit; role badges; toggle for enable/disable with min 48px"],
+        "tokens": "Primary CTA bg-brandBlue; mb-6 between sections; pagination same as referrals",
+        "notes": "Role dropdown or checkboxes; audit log list text-subtitle"
+      },
+      "access_route": {
+        "route": "/admin/users",
+        "menu": "Admin sidebar → Users",
+        "livewire_component": "admin.users.index, admin.users.edit",
+        "secondary_menu_or_tab": "Admin → Users"
+      }
+    },
+    {
+      "id": 20,
+      "original_id": "STORY-020",
+      "title": "Administration – System and Notification Settings",
+      "description": "As an administrator, I want to configure system and notification settings so that the portal behaves according to policy",
+      "acceptance": [
+        "Settings page: referral ID format, lockout attempts, session timeout",
+        "Email/SMS on/off and template selection or edit",
+        "Optional: maintenance mode, feature flags",
+        "Settings stored in database or config (persistent)",
+        "Task: Build settings form and persistence",
+        "Task: Apply settings in referral and notification logic"
+      ],
+      "priority": 20,
+      "estimate_hours": 3.0,
+      "module": "Administration",
+      "epic": "EPIC-006",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Admin → Settings: form in bg-white shadow-soft rounded-lgx; sections: General, Notifications (Email/SMS)",
+        "components": ["Labels text-subtitle; inputs text-body; atcl-button for Save; toggles min 48px"],
+        "tokens": "gap-3 form layout; mb-6 between sections; primary save button bg-brandBlue",
+        "notes": "Referral ID format, lockout, session timeout, email/SMS toggles and templates"
+      },
+      "access_route": {
+        "route": "/admin/settings",
+        "menu": "Admin sidebar → Settings",
+        "livewire_component": "admin.settings",
+        "secondary_menu_or_tab": "Admin → Settings"
+      }
+    },
+    {
+      "id": 21,
+      "original_id": "STORY-021",
+      "title": "Report Generation – Daily, Monthly, Annual",
+      "description": "As an administrator, I want to generate referral reports by period so that I can meet management and compliance reporting needs",
+      "acceptance": [
+        "Report type: Referral summary (counts by status, by referrer) for selected period",
+        "Period options: Daily, Monthly, Annual (with date/range picker)",
+        "Output: on-screen table and optional export (PDF, Excel, or CSV)",
+        "Columns: period, total referrals, pending, approved, rejected; optional breakdown by referrer",
+        "Report can be run on demand (no scheduled run required for MVP; optional cron later)",
+        "Task: Build report query and period filter",
+        "Task: Create report view and export",
+        "Task: Add report link in admin and dashboard"
+      ],
+      "priority": 21,
+      "estimate_hours": 6.0,
+      "module": "Reports",
+      "epic": "EPIC-007",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Admin → Reports: period selector (Daily/Monthly/Annual + date picker); results table in bg-white shadow-soft rounded-lgx; export button",
+        "components": ["Select/dropdown text-body; table text-body; atcl-button for Run report / Export PDF or CSV"],
+        "tokens": "mb-6 below period filter; primary CTA bg-brandBlue; truncate for long cells",
+        "notes": "On-screen table + optional export; responsive table or cards on mobile"
+      },
+      "access_route": {
+        "route": "/admin/reports",
+        "menu": "Admin sidebar → Reports",
+        "livewire_component": "admin.reports.period-report",
+        "secondary_menu_or_tab": "Admin → Reports"
+      }
+    },
+    {
+      "id": 22,
+      "original_id": "STORY-022",
+      "title": "Export Referrals List",
+      "description": "As an administrator, I want to export the list of referrals (filtered) so that I can use data in Excel or for external analysis",
+      "acceptance": [
+        "Export from All Referrals (and Pending) list with current filters applied",
+        "Format: CSV or Excel",
+        "Columns: referral ID, referred name, contact, referrer, date, status, approver (if approved/rejected)",
+        "Filename includes date range or report date",
+        "Task: Implement export service (CSV/Excel)",
+        "Task: Add export button to referral list views"
+      ],
+      "priority": 22,
+      "estimate_hours": 3.0,
+      "module": "Reports",
+      "epic": "EPIC-007",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Export button on All Referrals / Pending list pages; no dedicated page – action triggers download",
+        "components": ["atcl-button or link: Export CSV / Export Excel; min 48px; same toolbar as list filters"],
+        "tokens": "Secondary style for Export (or text-brandBlue link); text-body",
+        "notes": "Current filters apply to export; success message or file download"
+      },
+      "access_route": {
+        "route": "/admin/referrals (list) or /admin/referrals/pending",
+        "menu": "Admin → All Referrals or Pending Referrals → Export button",
+        "livewire_component": "admin.referrals-list (export action)",
+        "secondary_menu_or_tab": "Admin → All Referrals / Pending Referrals"
+      }
+    },
+    {
+      "id": 23,
+      "original_id": "STORY-023",
+      "title": "Responsive and Mobile-Compatible UI",
+      "description": "As a user, I want the portal to work on desktop and mobile so that I can refer and approve from any device",
+      "acceptance": [
+        "Layout adapts to desktop (e.g. >768px) and mobile (<768px)",
+        "Touch-friendly buttons and form controls (min 44px target where possible)",
+        "Navigation usable on mobile (e.g. hamburger menu or bottom nav)",
+        "Tables either scroll horizontally or switch to card layout on small screens",
+        "Forms and dashboards tested on at least one mobile viewport",
+        "Task: Apply responsive Tailwind classes and test breakpoints",
+        "Task: Implement mobile navigation pattern"
+      ],
+      "priority": 23,
+      "estimate_hours": 4.0,
+      "module": "UI Shell",
+      "epic": "EPIC-000",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "All pages: min-h-screen; breakpoints (e.g. md: sidebar visible, default drawer); flex-1 min-h-0 overflow-y-auto for content",
+        "components": ["Touch targets ≥48px; tables: overflow-x-auto or card stack on small screens; hamburger menu min 48px"],
+        "tokens": "vh/vw where needed; px-6 SafeArea; responsive spacing; no fixed px for font (use text-body/title/subtitle)",
+        "notes": "Cross-cutting; apply to every Blade/Livewire view"
+      },
+      "access_route": {
+        "route": "All routes (global layout behavior)",
+        "menu": "N/A – applies to entire app",
+        "livewire_component": "N/A – layout and global components",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 24,
+      "original_id": "STORY-024",
+      "title": "Secure Authentication and Data Protection",
+      "description": "As the organization, I want secure authentication and data protection so that member and referral data is safe and we comply with best practices",
+      "acceptance": [
+        "Passwords hashed (bcrypt or equivalent), never stored plain",
+        "HTTPS enforced in production",
+        "Sensitive routes protected by authentication and authorization",
+        "Input validation and output encoding to reduce XSS/SQL injection risk",
+        "Referral and member data accessible only to owner or admins (role-based)",
+        "Compliance with applicable data protection and ICT best practices (e.g. access control, audit log)",
+        "Task: Enforce HTTPS and secure cookies",
+        "Task: Apply authorization checks on all referral and user actions",
+        "Task: Document security measures for handover"
+      ],
+      "priority": 24,
+      "estimate_hours": 4.0,
+      "module": "Security & Compliance",
+      "epic": "EPIC-008",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "No direct UI – middleware, auth, authorization; error pages (403/404) can use app layout with text-body, atcl-button back",
+        "components": ["403/404: message text-title; link/button min 48px; focus:ring-brandBlue"],
+        "tokens": "Consistent with rest of app for any security-related messages",
+        "notes": "Implementation concern; document in handover"
+      },
+      "access_route": {
+        "route": "N/A – applies to all protected routes; 403/404 on invalid access",
+        "menu": "N/A",
+        "livewire_component": "N/A",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 25,
+      "original_id": "STORY-025",
+      "title": "Backup and Recovery Mechanism",
+      "description": "As the organization, I want a backup and recovery mechanism so that data can be restored after failure",
+      "acceptance": [
+        "Database backups (daily or as per policy); backup location documented",
+        "Optional: automated backup script or use of managed DB backups",
+        "Recovery procedure documented (steps to restore from backup)",
+        "Task: Implement or document backup process",
+        "Task: Document recovery steps in system documentation"
+      ],
+      "priority": 25,
+      "estimate_hours": 3.0,
+      "module": "Security & Compliance",
+      "epic": "EPIC-008",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "No UI – backup scripts/docs; if admin backup trigger exists: single atcl-button with confirmation",
+        "components": ["Optional: Admin → Settings → Backup section with Run backup button"],
+        "tokens": "Same as Settings page",
+        "notes": "Primarily documentation and ops"
+      },
+      "access_route": {
+        "route": "N/A (backend/cron); optional /admin/settings#backup",
+        "menu": "Optional: Admin → Settings → Backup",
+        "livewire_component": "N/A or admin.settings",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 26,
+      "original_id": "STORY-026",
+      "title": "Scalable Architecture and Deployment",
+      "description": "As the organization, I want a scalable and maintainable architecture so that the system can grow and be deployed reliably",
+      "acceptance": [
+        "Laravel application structure (MVC, services where appropriate)",
+        "Environment-based config (.env); no secrets in code",
+        "Migrations for all database schema changes",
+        "Clear separation between member and admin areas",
+        "Documented deployment steps (e.g. deploy script or manual steps)",
+        "Task: Use Laravel best practices and migrations",
+        "Task: Document deployment and environment setup"
+      ],
+      "priority": 26,
+      "estimate_hours": 3.0,
+      "module": "Technical",
+      "epic": "EPIC-008",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "No UI – codebase and deployment; any deploy/health UI: simple status text-body",
+        "components": ["N/A – architecture and docs"],
+        "tokens": "N/A",
+        "notes": "Laravel structure, .env, migrations; document in README"
+      },
+      "access_route": {
+        "route": "N/A",
+        "menu": "N/A",
+        "livewire_component": "N/A",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 27,
+      "original_id": "STORY-027",
+      "title": "Documentation and Handover",
+      "description": "As the client, I want source code, system documentation, and user guides so that my team can operate and maintain the system",
+      "acceptance": [
+        "Source code delivered in agreed repository or archive with README",
+        "System documentation: architecture overview, env config, backup/recovery, deployment",
+        "User manual: how to register, log in, submit referral, view referrals, view dashboard (member)",
+        "Administrator guide: login, approval workflow, reports, settings, user/role management",
+        "Task: Write README and technical docs",
+        "Task: Create user and admin guides (can be PDF or wiki)"
+      ],
+      "priority": 27,
+      "estimate_hours": 6.0,
+      "module": "Deliverables",
+      "epic": "EPIC-009",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Documentation (PDF/wiki) can use same typography and brand colors for screenshots and headings",
+        "components": ["README and docs: clear headings, code blocks; user/admin guides: step-by-step with UI references"],
+        "tokens": "Use brandBlue for headings in docs if desired; consistent terminology",
+        "notes": "No in-app UI for this story – deliverable artifacts"
+      },
+      "access_route": {
+        "route": "N/A – delivered as files/repo",
+        "menu": "N/A",
+        "livewire_component": "N/A",
+        "secondary_menu_or_tab": null
+      }
+    },
+    {
+      "id": 28,
+      "original_id": "STORY-028",
+      "title": "Integration with Existing Systems (Where Applicable)",
+      "description": "As the organization, I want the referral portal to integrate with existing systems where applicable so that member data is consistent and referral outcomes can be used downstream",
+      "acceptance": [
+        "Document integration points (e.g. member validation, core banking, CRM) if any",
+        "If member validation API exists: integrate to verify membership number on registration or referral",
+        "If no API: support manual verification or batch upload of eligible members",
+        "Referral approval status or approved-referral list exportable for use by other systems (API or file export)",
+        "Task: Confirm integration scope with client",
+        "Task: Implement agreed integration (API client or file exchange)",
+        "Task: Document integration for support"
+      ],
+      "priority": 28,
+      "estimate_hours": 8.0,
+      "module": "Integration",
+      "epic": "EPIC-010",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "If admin UI for integration config: form in Settings or dedicated Integration page; same form tokens",
+        "components": ["Optional: API URL, credentials (masked), Test connection button; text-body inputs"],
+        "tokens": "Same as Admin Settings; primary for Test/Save bg-brandBlue",
+        "notes": "Scope depends on client; may be backend-only"
+      },
+      "access_route": {
+        "route": "Optional: /admin/settings#integration or /admin/integration",
+        "menu": "Optional: Admin → Settings → Integration (tab)",
+        "livewire_component": "admin.settings or admin.integration",
+        "secondary_menu_or_tab": "Admin → Settings"
+      }
+    },
+    {
+      "id": 29,
+      "original_id": "STORY-029",
+      "title": "Application Sidebar and Navigation",
+      "description": "As a user, I want a consistent sidebar navigation so that I can easily move between sections of the portal and access the features relevant to my role",
+      "acceptance": [
+        "Sidebar visible on desktop (≥768px) with fixed width; collapsible drawer or hamburger on mobile",
+        "Member nav items: Dashboard, My referrals, Submit referral",
+        "Approver/Admin nav items: Dashboard, Pending referrals, All referrals, Reports; Admins additionally: Users, Settings",
+        "Active route highlighted (bg-brandBlue or text-brandBlue)",
+        "User profile section with name, avatar/initials, and logout option",
+        "Notification bell or indicator accessible from sidebar/header",
+        "ATCL logo or branding at top of sidebar",
+        "Touch targets ≥48px for all nav items",
+        "Smooth expand/collapse on mobile (drawer overlay or slide-in)",
+        "Task: Build sidebar component with role-based menu items",
+        "Task: Implement responsive sidebar (desktop persistent, mobile drawer)",
+        "Task: Apply ATCL design tokens to sidebar"
+      ],
+      "priority": 29,
+      "estimate_hours": 5.0,
+      "module": "UI Shell",
+      "epic": "EPIC-000",
+      "design": {
+        "reference": "Tailwind + Laravel Design Guidelines; ATCL SACCOS Official Brand Colors (docs/DESIGN_GUIDELINES.md)",
+        "layout": "Sidebar: fixed left, w-64 (desktop); bg-white shadow-soft; main content flex-1 overflow-y-auto; mobile: drawer overlay with bg-white",
+        "components": ["Nav links text-body text-primaryText; active: bg-brandBlue/10 or text-brandBlue; hover: bg-brandGray/5; logo in header; user dropdown at bottom"],
+        "tokens": "bg-white sidebar; shadow-soft; rounded-lgx for active item; min-h-[48px] nav items; px-4 py-3; gap-3 between items",
+        "notes": "Shared by member and admin layouts; role-based visibility for menu items"
+      },
+      "access_route": {
+        "route": "All authenticated routes (app layout)",
+        "menu": "Sidebar is the primary navigation for Dashboard, Referrals, Admin sections",
+        "livewire_component": "layouts.sidebar or navigation-menu (refactored)",
+        "secondary_menu_or_tab": null
+      }
+    }
+  ],
+  "metadata": {
+    "total_stories": 29,
+    "total_hours": 117.0,
+    "implementation_period_days": 45,
+    "modules": [
+      "Authentication",
+      "Referrals",
+      "Approval Workflow",
+      "Dashboard",
+      "Notifications",
+      "Administration",
+      "Reports",
+      "UI Shell",
+      "Security & Compliance",
+      "Technical",
+      "Deliverables",
+      "Integration"
+    ],
+    "epics": [
+      "EPIC-000: UI Shell",
+      "EPIC-001: Member Auth & Registration",
+      "EPIC-002: Referral Management",
+      "EPIC-003: Approval Workflow",
+      "EPIC-004: Dashboard & Performance",
+      "EPIC-005: Notifications",
+      "EPIC-006: Administration",
+      "EPIC-007: Reports",
+      "EPIC-008: Security, Compliance & Technical",
+      "EPIC-009: Deliverables",
+      "EPIC-010: Integration"
+    ],
+    "source": "project_requirements.txt (ATCLSACCOS/NC/02/2025-2026)",
+    "generated_by": "PRD author from project_requirements.txt",
+    "version": "1.0",
+    "last_updated": "2026-02-10"
+  }
+}

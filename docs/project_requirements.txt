@@ -1,0 +1,112 @@
+DEVELOPMENT OF A MEMBERSHIP REFERRAL PORTAL / SYSTEM
+ATCLSACCOS/NC/02/2025-2026
+1. BACKGROUND
+ATCL SACCOS LTD intends to enhance its membership growth strategy and service delivery through the
+development of a Membership Referral Portal/System.
+The system is expected to enable existing members to refer new members digitally, track referrals, and
+generate management reports.
+Qualified and experienced service providers are hereby invited to submit Quotations for the design,
+development, testing, deployment, and support of the Membership Referral Portal/System.
+2. OBJECTIVE OF THE PROCUREMENT
+The objective of this procurement is to:
+• Develop a secure, user-friendly membership referral portal/system
+• Improve membership acquisition, tracking, and reporting
+• Ensure value for money through competitive quotation analysis
+• Select a competent service provider in line with procurement procedures of ATCL SACCOS LTD
+3. METHOD OF PROCUREMENT
+The method of procurement for this assignment shall be Request for Quotations (RFQ), and the
+selection shall be conducted through Quotation Analysis, in accordance with applicable procurement
+policies and procedures.
+4. SCOPE OF SERVICES
+The successful bidder shall be responsible for:
+• System analysis and requirements gathering
+• Design and development of the Membership Referral Portal/System
+• Integration with existing systems (where applicable)
+• User acceptance testing and deployment
+• User training and basic documentation
+• Warranty and post-implementation technical support
+5. MINIMUM SYSTEM REQUIREMENTS AND FEATURES
+Bidders shall quote have based on the following minimum requirements or better:
+(a) Functional Requirements
+• Member registration and login
+• Referral submission and tracking
+• Unique referral identification
+• Approval workflow for referred members
+• Referral performance dashboard
+• Automated notifications (SMS/Email where applicable)
+• Administrative control panel
+• Report generation (daily, monthly, annual)
+(b) Technical Requirements
+• Web-based system (desktop and mobile compatible)
+• Secure authentication and data protection
+• Scalable architecture
+• Backup and recovery mechanism
+• Compliance with ICT and data protection best practices
+6. DELIVERABLES
+The expected deliverables include:
+1. Fully functional Membership Referral Portal/System
+2. Source code and system documentation
+3. User manuals and administrator guides
+4. Training for designated staff
+5. Warranty and support agreement
+7. ELIGIBILITY AND QUALIFICATION REQUIREMENTS
+Bidders must submit the following:
+1. Valid Business Registration Certificate
+2. Tax Identification Number (TIN)
+3. Valid Tax Clearance Certificate
+4. Company profile detailing ICT/system development experience
+5. Evidence of similar systems developed (references or portfolio)
+8. QUOTATION SUBMISSION REQUIREMENTS
+Each quotation must clearly include:
+• Total cost (inclusive of all applicable taxes)
+• Implementation timeline
+• Warranty and support period
+• Payment terms
+• Quotation validity period (minimum 30 days)
+9. EVALUATION CRITERIA (QUOTATION ANALYSIS)
+Quotations shall be evaluated based on the following criteria:
+Criteria Consideration
+Compliance with scope and specifications Mandatory
+Price competitiveness High
+Technical capability and system quality High
+Implementation timeline Medium
+Relevant experience and references Medium
+The contract shall be awarded to the lowest evaluated, responsive, and compliant bidder, and not
+necessarily the lowest price.
+10. IMPLEMENTATION PERIOD
+The successful bidder shall complete development and deployment of the system within [45] days from
+the date of contract signing or issuance of Purchase Order.
+11. PAYMENT TERMS
+Payment shall be made:
+• Based on agreed milestones or upon full delivery and acceptance
+• Against submission of a valid invoice
+• Through approved payment methods of ATCL SACCOS LTD
+12. TERMS AND CONDITIONS
+• ATCL SACCOS LTD reserves the right to accept or reject any quotation without assigning reasons
+• Late submissions shall not be considered
+• Prices quoted shall remain firm during the quotation validity period
+• All intellectual property rights of the system shall belong to ATCL SACCOS LTD upon full payment
+• The contract with the service provider who will win the contract may be renewed upon
+satisfactory performance of the contract
+13. SUBMISSION DETAILS AND DEADLINE
+Quotations must be submitted:
+• In sealed envelopes clearly marked
+“QUOTATION FOR DEVELOPMENT OF MEMBERSHIP REFERRAL PORTAL/SYSTEM –
+ATCL SACCOS LTD”
+• On or before: Friday 13th February, 2026
+• To: The Chairperson of the Board,
+ ATCL SACCOS LTD,
+ P.O. Box 543
+ Dar es Salaam, Tanzania.
+ Email: atclsaccos1@gmail.com
+14. CONTACT PERSON (FOR CLARIFICATIONS ONLY)
+Name: Nkundwe Mwakyusa
+Title: Procurement Expert (ATCL Saccos)
+Phone: 0742767653
+Email: nkundwe.mwakyusa@airtanzania.co.tz
+15. DECLARATION
+I/We hereby declare that the information provided in this quotation is true and correct and that we agree
+to comply with all terms and conditions of this RFQ issued by ATCL SACCOS LTD.
+Service Provider Name: ________________________
+Authorized Signature: _________________________
+Date: ______________________________________

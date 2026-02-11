@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Providers;
+
+use App\Actions\Fortify\CreateNewUser;
+use App\Actions\Fortify\ResetUserPassword;
+use App\Actions\Fortify\UpdateUserPassword;
+use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Models\User;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
+use Laravel\Fortify\Fortify;
+
+class FortifyServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        Fortify::createUsersUsing(CreateNewUser::class);
+        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
+        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
+
+        // Login by email OR membership_number (input name remains "email")
+        Fortify::authenticateUsing(function (Request $request) {
+            $value = $request->input('email');
+            $user = User::where('email', $value)
+                ->orWhere('membership_number', $value)
+                ->first();
+            if (! $user) {
+                return null;
+            }
+
+            // Block login if account is temporarily locked
+            if ($user->locked_until && $user->locked_until->isFuture()) {
+                return null;
+            }
+
+            if ($user->is_active && Hash::check($request->password, $user->password)) {
+                return $user;
+            }
+            return null;
+        });
+
+        RateLimiter::for('login', function (Request $request) {
+            $attempts = (int) (\App\Models\Setting::get('lockout_attempts') ?: 5);
+            $throttleKey = Str::transliterate(Str::lower($request->input('email').'|'.$request->ip()));
+            return Limit::perMinute(max(1, $attempts))->by($throttleKey);
+        });
+
+        RateLimiter::for('two-factor', function (Request $request) {
+            return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        });
+    }
+}
